@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import {getDiferentYear, marca} from '../helpers';
+import { getDiferentYear, totalMarca, getPlan } from "../helpers";
 
 const Campo = styled.div`
   display: flex;
@@ -51,7 +51,8 @@ const Error = styled.div`
   margin-bottom: 2rem;
 `;
 
-const Formulario = () => {
+const Formulario = ({setresumen}) => {
+  
   //initilization useState
   const [cotizador, setCotizador] = useState({
     marca: "",
@@ -71,12 +72,11 @@ const Formulario = () => {
     });
   };
 
-
   const submitCotizador = (e) => {
     e.preventDefault();
 
     //evaluar campo
-    if (marca.trim() === '' || year.trim() === '' || plan.trim() === '') {
+    if (marca.trim() === "" || year.trim() === "" || plan.trim() === "") {
       setError(true);
       return;
     }
@@ -84,22 +84,28 @@ const Formulario = () => {
     setError(false);
 
     //get diferent from year
-    const diferencia = getDiferentYear(year)
-  
+    const diferencia = getDiferentYear(year);
+
     //basic
     let resultado = 2000;
 
-
     // por cada año hay que restar el 3%
-    resultado -= ((diferencia * 3) * resultado)/100;
+    resultado -= (diferencia * 3 * resultado) / 100;
 
     //porcentaje marca;
-    resultado = calcularMarca(marca) * resultado;
+    resultado = totalMarca(marca) * resultado;
 
     //porcentaje year;
-    
+    resultado = parseFloat(getPlan(plan) * resultado).toFixed(2);
 
+    console.log(resultado);
 
+    setresumen({
+      cotizacion : resultado,
+      info: {
+        ...cotizador
+      }
+    })
     //porcentaje plan;
   };
 
