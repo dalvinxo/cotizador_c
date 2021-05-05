@@ -40,6 +40,6 @@ export function getPlan(plan){
 
 export function primeraMayuscula(texto = ''){
 
-    return texto.charAt(0).toUpperCase() + texto.slice(0);
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
 
 }

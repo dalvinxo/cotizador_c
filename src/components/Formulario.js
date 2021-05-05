@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import PropTypes from 'prop-types';
 import { getDiferentYear, totalMarca, getPlan } from "../helpers";
 
 const Campo = styled.div`
@@ -51,7 +52,7 @@ const Error = styled.div`
   margin-bottom: 2rem;
 `;
 
-const Formulario = ({setresumen}) => {
+const Formulario = ({setresumen, setSpinner}) => {
   
   //initilization useState
   const [cotizador, setCotizador] = useState({
@@ -95,18 +96,22 @@ const Formulario = ({setresumen}) => {
     //porcentaje marca;
     resultado = totalMarca(marca) * resultado;
 
-    //porcentaje year;
+    //plan;
     resultado = parseFloat(getPlan(plan) * resultado).toFixed(2);
 
-    console.log(resultado);
+    setSpinner(true);
 
-    setresumen({
-      cotizacion : resultado,
-      info: {
-        ...cotizador
-      }
-    })
-    //porcentaje plan;
+    setTimeout(()=>{
+
+      setSpinner(false);
+      setresumen({
+        cotizacion : resultado,
+        info: {
+          ...cotizador
+        }
+      })
+    },3000)
+
   };
 
   return (
@@ -164,5 +169,11 @@ const Formulario = ({setresumen}) => {
     </form>
   );
 };
+
+Formulario.propTypes = {
+  setresumen: PropTypes.func.isRequired,
+  setSpinner: PropTypes.func.isRequired
+}
+
 
 export default Formulario;
