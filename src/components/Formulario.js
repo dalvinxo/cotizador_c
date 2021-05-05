@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import {getDiferentYear, marca} from '../helpers';
 
 const Campo = styled.div`
   display: flex;
@@ -41,6 +42,15 @@ const ButtonCotizar = styled.button`
   }
 `;
 
+const Error = styled.div`
+  background-color: red;
+  color: white;
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+`;
+
 const Formulario = () => {
   //initilization useState
   const [cotizador, setCotizador] = useState({
@@ -54,38 +64,52 @@ const Formulario = () => {
   //state value
   const { marca, year, plan } = cotizador;
 
-
-  const changeInfo = e =>{
-
+  const changeInfo = (e) => {
     setCotizador({
       ...cotizador,
-      [e.target.name] : e.target.value
-    })
+      [e.target.name]: e.target.value,
+    });
+  };
 
 
-  }
-
-  const submitCotizador = e => {
+  const submitCotizador = (e) => {
     e.preventDefault();
 
     //evaluar campo
+    if (marca.trim() === '' || year.trim() === '' || plan.trim() === '') {
+      setError(true);
+      return;
+    }
+
+    setError(false);
+
+    //get diferent from year
+    const diferencia = getDiferentYear(year)
+  
+    //basic
+    let resultado = 2000;
+
+
+    // por cada año hay que restar el 3%
+    resultado -= ((diferencia * 3) * resultado)/100;
 
     //porcentaje marca;
+    resultado = calcularMarca(marca) * resultado;
 
     //porcentaje year;
+    
+
 
     //porcentaje plan;
   };
 
   return (
     <form onSubmit={submitCotizador}>
+      {error ? <Error>Todos los campos son obligatorios</Error> : null}
+
       <Campo>
         <Label>Marca</Label>
-        <Select 
-        name = "marca"
-        value={marca}
-        onChange = {changeInfo}
-        >
+        <Select name="marca" value={marca} onChange={changeInfo}>
           <option value="">--Select--</option>
           <option value="americano">--Americano--</option>
           <option value="europeo">--Europeo--</option>
@@ -95,11 +119,7 @@ const Formulario = () => {
 
       <Campo>
         <Label>Año</Label>
-        <Select 
-        name = "year"
-        value={year}
-         onChange = {changeInfo}
-        >
+        <Select name="year" value={year} onChange={changeInfo}>
           <option value="">-- Seleccione --</option>
           <option value="2021">2021</option>
           <option value="2020">2020</option>
@@ -121,7 +141,7 @@ const Formulario = () => {
           name="plan"
           value="basico"
           checked={plan === "basico"}
-          onChange = {changeInfo}
+          onChange={changeInfo}
         />
         Basico
         <InputRadio
@@ -129,12 +149,12 @@ const Formulario = () => {
           name="plan"
           value="completo"
           checked={plan === "completo"}
-          onChange = {changeInfo}
+          onChange={changeInfo}
         />
         Completo
       </Campo>
 
-      <ButtonCotizar type="button">Cotizar</ButtonCotizar>
+      <ButtonCotizar type="submit">Cotizar</ButtonCotizar>
     </form>
   );
 };
